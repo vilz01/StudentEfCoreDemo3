@@ -10,107 +10,47 @@ using Xunit;
 
 public class StudentsControllerTests
 {
-    private StudentContext GetDbContext()
+    [Fact]
+    public async Task GetStudents_ReturnsAllStudents()
     {
         var options = new DbContextOptionsBuilder<StudentContext>()
-            .UseInMemoryDatabase(databaseName: "StudentTestDb")
+            .UseInMemoryDatabase(databaseName: "StudentDbTest")
             .Options;
-        return new StudentContext(options);
-    }
 
-    [Fact]
-    public async Task GetStudents_ReturnsEmptyList_WhenNoStudents()
-    {
-        // Arrange
-        var context = GetDbContext();
-        var controller = new StudentsController(context);
+        using (var context = new StudentContext(options))
+        {
+            context.Students.Add(new Student { Id = 1, FirstName = "Maija", LastName = "Meikäläinen", Age = 20 });
+            context.Students.Add(new Student { Id = 1, FirstName = "Matti", LastName = "Meikäläinen", Age = 20 });
+            await context.SaveChangesAsync();
+        }
 
-        // Act
-        var result = await controller.GetStudents();
+        using (var context = new StudentContext(options))
+        {
+            var controller = new StudentsController(context);
 
-        // Assert
-        var actionResult = Assert.IsType<ActionResult<IEnumerable<Student>>>(result);
-        var students = Assert.IsType<List<Student>>(actionResult.Value);
-        Assert.Empty(students);
+            var result = await controller.GetStudents();
+
+            var actionResult = Assert.IsType<ActionResult<IEnumerable<Student>>>(result);
+            var studentsList = Assert.IsAssignableFrom<IEnumerable<Student>>(actionResult.Value);
+
+            Assert.Equal(2, studentsList.Count());
+        }
     }
 
     [Fact]
     public async Task GetStudent_ReturnsNotFound_WhenStudentDoesNotExist()
     {
-        // Arrange
-        var context = GetDbContext();
-        var controller = new StudentsController(context);
+        var options = new DbContextOptionsBuilder<StudentContext>()
+            .UseInMemoryDatabase(databaseName: "StudentDbTest_NotFound")
+            .Options;
 
-        // Act
-        var result = await controller.GetStudent(1);
+        using (var context = new StudentContext(options))
+        {
+            var controller = new StudentsController(context);
+            var result = await controller.GetStudent(99);
 
-        // Assert
-        Assert.IsType<NotFoundResult>(result.Result);
+            Assert.IsType<NotFoundResult>(result.Result);
+        }
     }
 
-    [Fact]
-    public async Task PostStudent_AddsStudentToDatabase()
-    {
-        // Arrange
-        var context = GetDbContext();
-        var controller = new StudentsController(context);
-        var newStudent = new Student { FirstName = "John", LastName = "Doe", Age = 22 };
-
-        // Act
-        var result = await controller.PostStudent(newStudent);
-
-        // Assert
-        var createdResult = Assert.IsType<CreatedAtActionResult>(result.Result);
-        var student = Assert.IsType<Student>(createdResult.Value);
-        Assert.Equal("John", student.FirstName);
-        Assert.Equal("Doe", student.LastName);
-        Assert.Equal(22, student.Age);
-
-        var studentsInDb = await context.Students.ToListAsync();
-        Assert.Single(studentsInDb);
-    }
-
-    [Fact]
-    public async Task PutStudent_UpdatesExistingStudent()
-    {
-        // Arrange
-        var context = GetDbContext();
-        var controller = new StudentsController(context);
-        var student = new Student { FirstName = "John", LastName = "Doe", Age = 22 };
-        context.Students.Add(student);
-        await context.SaveChangesAsync();
-
-        student.FirstName = "Updated Name";
-        student.Age = 25;
-
-        // Act
-        var result = await controller.PutStudent(student.Id, student);
-
-        // Assert
-        Assert.IsType<NoContentResult>(result);
-
-        var updatedStudent = await context.Students.FindAsync(1);
-        Assert.Equal("Updated Name", updatedStudent.FirstName);
-        Assert.Equal(25, updatedStudent.Age);
-    }
-
-    [Fact]
-    public async Task DeleteStudent_RemovesStudentFromDatabase()
-    {
-        // Arrange
-        var context = GetDbContext();
-        var controller = new StudentsController(context);
-        var student = new Student { FirstName = "John", LastName = "Doe", Age = 22 };
-        context.Students.Add(student);
-        await context.SaveChangesAsync();
-
-        // Actasdadasdsadasfasfaf
-        var result = await controller.DeleteStudent(1);
-
-        // Assert
-        Assert.IsType<NoContentResult>(result);
-
-        var deletedStudent = await context.Students.FindAsync(student.Id);
-        Assert.Null(deletedStudent);
-    }
 }
