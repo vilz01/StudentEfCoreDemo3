@@ -20,7 +20,7 @@ public class StudentsControllerTests
         using (var context = new StudentContext(options))
         {
             context.Students.Add(new Student { Id = 1, FirstName = "Maija", LastName = "Meikäläinen", Age = 20 });
-            context.Students.Add(new Student { Id = 1, FirstName = "Matti", LastName = "Meikäläinen", Age = 20 });
+            context.Students.Add(new Student { Id = 2, FirstName = "Matti", LastName = "Meikäläinen", Age = 20 });
             await context.SaveChangesAsync();
         }
 
