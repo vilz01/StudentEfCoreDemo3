@@ -48,68 +48,69 @@ public class StudentsControllerTests
         Assert.IsType<NotFoundResult>(result.Result);
     }
 
-    //[Fact]
-    //public async Task PostStudent_AddsStudentToDatabase()
-    //{
-    //    // Arrange
-    //    var context = GetDbContext();
-    //    var controller = new StudentsController(context);
-    //    var newStudent = new Student { FirstName = "John Doe", Age = 22 };
+    [Fact]
+    public async Task PostStudent_AddsStudentToDatabase()
+    {
+        // Arrange
+        var context = GetDbContext();
+        var controller = new StudentsController(context);
+        var newStudent = new Student { FirstName = "John", LastName = "Doe", Age = 22 };
 
-    //    // Act
-    //    var result = await controller.PostStudent(newStudent);
+        // Act
+        var result = await controller.PostStudent(newStudent);
 
-    //    // Assert
-    //    var createdResult = Assert.IsType<CreatedAtActionResult>(result.Result);
-    //    var student = Assert.IsType<Student>(createdResult.Value);
-    //    Assert.Equal("John Doe", student.FirstName);
-    //    Assert.Equal(22, student.Age);
+        // Assert
+        var createdResult = Assert.IsType<CreatedAtActionResult>(result.Result);
+        var student = Assert.IsType<Student>(createdResult.Value);
+        Assert.Equal("John", student.FirstName);
+        Assert.Equal("Doe", student.LastName);
+        Assert.Equal(22, student.Age);
 
-    //    var studentsInDb = await context.Students.ToListAsync();
-    //    Assert.Single(studentsInDb);
-    //}
+        var studentsInDb = await context.Students.ToListAsync();
+        Assert.Single(studentsInDb);
+    }
 
-    //[Fact]
-    //public async Task PutStudent_UpdatesExistingStudent()
-    //{
-    //    // Arrange
-    //    var context = GetDbContext();
-    //    var controller = new StudentsController(context);
-    //    var student = new Student { FirstName = "John Doe", Age = 22 };
-    //    context.Students.Add(student);
-    //    await context.SaveChangesAsync();
+    [Fact]
+    public async Task PutStudent_UpdatesExistingStudent()
+    {
+        // Arrange
+        var context = GetDbContext();
+        var controller = new StudentsController(context);
+        var student = new Student { FirstName = "John", LastName = "Doe", Age = 22 };
+        context.Students.Add(student);
+        await context.SaveChangesAsync();
 
-    //    student.FirstName = "Updated Name";
-    //    student.Age = 25;
+        student.FirstName = "Updated Name";
+        student.Age = 25;
 
-    //    // Act
-    //    var result = await controller.PutStudent(student.Id, student);
+        // Act
+        var result = await controller.PutStudent(student.Id, student);
 
-    //    // Assert
-    //    Assert.IsType<NoContentResult>(result);
+        // Assert
+        Assert.IsType<NoContentResult>(result);
 
-    //    var updatedStudent = await context.Students.FindAsync(1);
-    //    Assert.Equal("Updated Name", updatedStudent.FirstName);
-    //    Assert.Equal(25, updatedStudent.Age);
-    //}
+        var updatedStudent = await context.Students.FindAsync(1);
+        Assert.Equal("Updated Name", updatedStudent.FirstName);
+        Assert.Equal(25, updatedStudent.Age);
+    }
 
-    //[Fact]
-    //public async Task DeleteStudent_RemovesStudentFromDatabase()
-    //{
-    //    // Arrange
-    //    var context = GetDbContext();
-    //    var controller = new StudentsController(context);
-    //    var student = new Student { FirstName = "John Doe", Age = 22 };
-    //    context.Students.Add(student);
-    //    await context.SaveChangesAsync();
+    [Fact]
+    public async Task DeleteStudent_RemovesStudentFromDatabase()
+    {
+        // Arrange
+        var context = GetDbContext();
+        var controller = new StudentsController(context);
+        var student = new Student { FirstName = "John", LastName = "Doe", Age = 22 };
+        context.Students.Add(student);
+        await context.SaveChangesAsync();
 
-    //    // Act
-    //    var result = await controller.DeleteStudent(1);
+        // Actasdadasdsadasfasfaf
+        var result = await controller.DeleteStudent(1);
 
-    //    // Assert
-    //    Assert.IsType<NoContentResult>(result);
+        // Assert
+        Assert.IsType<NoContentResult>(result);
 
-    //    var deletedStudent = await context.Students.FindAsync(student.Id);
-    //    Assert.Null(deletedStudent);
-    //}
+        var deletedStudent = await context.Students.FindAsync(student.Id);
+        Assert.Null(deletedStudent);
+    }
 }
