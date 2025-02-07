@@ -1,10 +1,10 @@
-name: Build and deploy .NET Core application to Web App julkaisuharjoitus
+name: Build and deploy .NET Core application to Web App StudentManagement20250131105827
 on:
   push:
     branches:
     - master
 env:
-  AZURE_WEBAPP_NAME: julkaisuharjoitus
+  AZURE_WEBAPP_NAME: StudentManagement20250131105827
   AZURE_WEBAPP_PACKAGE_PATH: StudentEfCoreDemo\publish
   CONFIGURATION: Release
   DOTNET_CORE_VERSION: 8.0.x
@@ -27,7 +27,7 @@ jobs:
     - name: Publish
       run: dotnet publish "${{ env.WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} --no-build --output "${{ env.AZURE_WEBAPP_PACKAGE_PATH }}"
     - name: Publish Artifacts
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v3
       with:
         name: webapp
         path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
@@ -36,7 +36,7 @@ jobs:
     needs: build
     steps:
     - name: Download artifact from build job
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v3
       with:
         name: webapp
         path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
@@ -44,5 +44,5 @@ jobs:
       uses: azure/webapps-deploy@v2
       with:
         app-name: ${{ env.AZURE_WEBAPP_NAME }}
-        publish-profile: ${{ secrets.julkaisuharjoitus_6436 }}
+        publish-profile: ${{ secrets.StudentManagement20250131105827_27EF }}
         package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
