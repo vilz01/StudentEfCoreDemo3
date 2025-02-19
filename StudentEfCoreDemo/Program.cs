@@ -38,7 +38,7 @@ namespace StudentEfCoreDemo
 
             app.MapControllers();
 
-            app.Run();
+            app.Run(); //development branch added
         }
     }
 }
